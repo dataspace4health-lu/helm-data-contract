@@ -1,0 +1,197 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "app.chartname" . }}"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app.kubernetes.io/instance: {{ include "app.revision" . }}
+    app.kubernetes.io/part-of: rse
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app.labels" . | nindent 8 }}
+      annotations:
+        {{- include "app.metricsAnnotations" . | nindent 8 }}
+{{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+    spec:
+      securityContext:
+{{- include "app.securitycontext" . | nindent 8 }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
+      containers:
+      - name: {{ template "app.chartname" . }}
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+        # image: node:16-alpine
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        {{- if .Values.image.command }}
+        command: 
+          {{- toYaml .Values.image.command | nindent 8 }}
+        {{- end }}
+        {{- if .Values.image.args }}
+        args: 
+          {{- toYaml .Values.image.args | nindent 8 }}
+        {{- end }}
+
+      {{- if .Values.useSecretRef }}
+        envFrom:
+          - secretRef:
+            name: {{ .Values.secretRefName }}
+      {{- else if .Values.useConfigMap }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.configMapName }}
+      {{- else }}
+        env:
+          # general
+          - name: NODE_ENV
+            value: "development"
+          # size in bytes
+          - name: REQUEST_SIZE
+            value: "1000000"
+
+          # server
+          - name: NX_API_ENDPOINT
+            value: "http://localhost:3000/"
+          - name: SERVER_THROTLLER_TTL
+            value: "60"
+          - name: SERVER_THROTLLER_LIMIT
+            value: "10"
+
+          #logger
+          ## types "console"/"winston"
+          - name: LOGGER_TYPE
+            value: "console"
+            
+          - name: DEBUG
+            value: "ioredis:*"
+            
+          # winston config
+          - name: LOGGER_WINSTON_LEVEL
+            value: {{ .Values.log.level | default "INFO" }}
+          - name: LOGGER_WINSTON_TRANSPORTS_CONSOLE
+            value: "true"
+          - name: LOGGER_WINSTON_TRANSPORTS_FILE
+            value: "logs/app.log"
+
+          # cache
+          ## types "memory"/"redis"
+          - name: CACHE_TYPE
+            value: "redis"
+          - name: CACHE_TTL
+            value: "86400"
+          - name: TOKEN_TTL
+            value: "86400"
+          # 14 days in milliseconds
+          - name: SD_CACHE_TTL
+            value: "1209600000"
+          # 24 hours in milliseconds
+          - name: SD_QUEUE_DELAY
+            value: "86400000"
+          # QUEUE RETRIES
+          - name: SD_QUEUE_RETRIES
+            value: "13"
+            
+          ## redis config
+          ## types node/cluster
+          - name: REDIS_TYPE
+            value: "cluster"
+          {{- if .Values.redis.enabled }}
+          - name: REDIS_HOST
+            value: "{{ include "app.chartname" . }}-redis-headless.{{ .Release.Namespace }}.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          {{- else }}
+          - name: REDIS_HOST
+            value: {{ .Values.redis.host | quote }}
+          - name: REDIS_PORT
+            value: {{ .Values.redis.port | quote }}
+          {{- end }}
+          - name: REDIS_PREFIX
+            value: "dct:"
+          - name: REDIS_PASSWORD
+            value: "test"
+          
+          # Data Exchange Logging
+          - name: DELS_LINK
+            value: "https://del-dev3.gxfs.dev/inbox"
+          - name: DELS_REL
+            value: "http://www.w3.org/ns/ldp#inbox"
+          - name: DELS_CONTEXT
+            value: "https://www.w3.org/ns/ldp"
+          - name: DELS_ID
+            value: "https://dcs.gaia-x.com/contracts/1001"
+          - name: DELS_INBOX
+            value: "https://del-dev3.gxfs.dev/inbox"
+
+          #gateway
+          - name: TRUST_SERVICE_URL
+            value: "https://trust-service.com"
+          - name: FEDERATED_CATALOG_URL
+            value: "https://federated-catalog.com"
+
+          - name: SIGNATURE_ID
+            value: "did:dcs:key:123"
+          - name: SIGNATURE_TYPE
+            value: "Ed25519VerificationKey2018"
+          - name: SIGNATURE_CONTROLLER
+            value: "did:dcs:controller"
+          - name: SIGNATURE_PUBLIC_KEY_BASE58
+            value: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+          - name: SIGNATURE_PRIVATE_KEY_BASE58
+            value: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+
+          - name: LOG_TOKEN_JWT_SECRET_KEY
+            value: "somesecretkey"
+          - name: LOG_TOKEN_EXPIRES_IN_MINUTES
+            value: "120"
+
+          #health-check
+          - name: API_DOCUMENTATION_URL
+            value: "http://localhost:8000/"
+
+        {{- if .Values.secretEnv }}
+        {{- range $key, $value := .Values.secretEnv }}
+          - name: "{{ $key }}"
+            valueFrom:
+              secretKeyRef:
+                name: "{{ $value.name }}"
+                key: "{{ $value.key }}"
+        {{- end }}
+        {{- end }}
+      {{- end }}
+{{- if .Values.extraVars }}
+{{ toYaml .Values.extraVars | indent 8 }}
+{{- end }}
+        ports:
+        {{- if .Values.metrics.enabled }}
+        - name: monitoring
+          containerPort: {{ .Values.metrics.port }}
+        {{- end }}
+        - name: http
+          containerPort: {{ .Values.config.http.port }}
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: {{ .Values.config.http.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 2
+          failureThreshold: 2
+          timeoutSeconds: 5
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
