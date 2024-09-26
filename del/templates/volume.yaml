@@ -1,0 +1,15 @@
+{{- if .Values.config.backup.location }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "app.chartname" . }}-db-backup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+{{- end }}
