@@ -59,14 +59,14 @@ spec:
         env:
           # general
           - name: NODE_ENV
-            value: "development"
+            value: {{ .Values.config.environment | quote }}
           # size in bytes
           - name: REQUEST_SIZE
             value: "1000000"
 
           # server
           - name: NX_API_ENDPOINT
-            value: "http://localhost:3000/"
+            value: "http://localhost:{{ .Values.config.http.port }}"
           - name: SERVER_THROTLLER_TTL
             value: "60"
           - name: SERVER_THROTLLER_LIMIT
@@ -76,10 +76,10 @@ spec:
           ## types "console"/"winston"
           - name: LOGGER_TYPE
             value: "console"
-            
-          - name: DEBUG
-            value: "ioredis:*"
-            
+
+          # - name: DEBUG
+          #   value: "ioredis:*"
+
           # winston config
           - name: LOGGER_WINSTON_LEVEL
             value: {{ .Values.log.level | default "INFO" }}
@@ -109,10 +109,10 @@ spec:
           ## redis config
           ## types node/cluster
           - name: REDIS_TYPE
-            value: "cluster"
+            value: "node"
           {{- if .Values.redis.enabled }}
           - name: REDIS_HOST
-            value: "{{ include "app.chartname" . }}-redis-headless.{{ .Release.Namespace }}.svc.cluster.local"
+            value: "{{ include "app.chartname" . }}-redis-master.default.svc.cluster.local"
           - name: REDIS_PORT
             value: "6379"
           {{- else }}
@@ -121,11 +121,14 @@ spec:
           - name: REDIS_PORT
             value: {{ .Values.redis.port | quote }}
           {{- end }}
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "app.chartname" . }}-redis
+                key: redis-password
           - name: REDIS_PREFIX
             value: "dct:"
-          - name: REDIS_PASSWORD
-            value: "test"
-          
+
           # Data Exchange Logging
           - name: DELS_LINK
             value: "https://del-dev3.gxfs.dev/inbox"
@@ -140,23 +143,23 @@ spec:
 
           #gateway
           - name: TRUST_SERVICE_URL
-            value: "https://trust-service.com"
+            value: {{ .Values.config.trustServiceUrl | quote }}
           - name: FEDERATED_CATALOG_URL
-            value: "https://federated-catalog.com"
+            value: {{ .Values.config.federatedCatalogUrl | quote }}
 
           - name: SIGNATURE_ID
-            value: "did:dcs:key:123"
+            value:  {{ .Values.config.signatureId | quote }}
           - name: SIGNATURE_TYPE
-            value: "Ed25519VerificationKey2018"
+            value: {{ .Values.config.signatureType | quote }}
           - name: SIGNATURE_CONTROLLER
-            value: "did:dcs:controller"
+            value: {{ .Values.config.signatureController | quote }}
           - name: SIGNATURE_PUBLIC_KEY_BASE58
-            value: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+            value: {{ .Values.config.signaturePublicKeyBase58 | quote }}
           - name: SIGNATURE_PRIVATE_KEY_BASE58
-            value: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+            value: {{ .Values.config.signaturePrivateKeyBase58 | quote }}
 
           - name: LOG_TOKEN_JWT_SECRET_KEY
-            value: "somesecretkey"
+            value: {{ .Values.config.logTokenJwtSecretKey | quote }}
           - name: LOG_TOKEN_EXPIRES_IN_MINUTES
             value: "120"
 
@@ -186,7 +189,7 @@ spec:
           containerPort: {{ .Values.config.http.port }}
         readinessProbe:
           httpGet:
-            path: /readiness
+            path: /health
             port: {{ .Values.config.http.port }}
           initialDelaySeconds: 5
           periodSeconds: 5

@@ -115,9 +115,21 @@ nats:
     enabled: false
 
 config:
+  environment: development
+
+  trustServiceUrl: "https://trust-service.com"
+  federatedCatalogUrl: "https://federated-catalog.com"
+  signatureId: "did:dcs:key:123"
+  signatureType: "Ed25519VerificationKey2018"
+  signatureController: "did:dcs:controller"
+  signaturePublicKeyBase58: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+  signaturePrivateKeyBase58: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+
+  logTokenJwtSecretKey: "somesecretkey"
+
   http:
     host: ""
-    port: 8080
+    port: 3000
     timeout:
       idle: 120s
       read: 10s
@@ -129,7 +141,7 @@ config:
 redis:
   enabled: true
   auth:
-    password: ""
+    password: "test"
   master:
     persistence:
       size: 5Gi
