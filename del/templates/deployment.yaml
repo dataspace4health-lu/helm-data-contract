@@ -230,12 +230,6 @@ spec:
             value: {{ .Values.config.dctServiceUrl | quote }}
             {{- end }}
 
-          # Health check
-          - name: DOCUMENTATION_URL
-            {{- if .Values.config.documentationUrl }}
-            value: {{ .Values.config.documentationUrl | quote }}
-            {{- end }}
-
         {{- if .Values.secretEnv }}
         {{- range $key, $value := .Values.secretEnv }}
           - name: "{{ $key }}"
@@ -263,7 +257,7 @@ spec:
           {{- end }}
         readinessProbe:
           httpGet:
-            path: {{ .Values.config.apiEndPoint }}/health
+            path: {{ default "/api" .Values.config.apiEndPoint | trimSuffix "/" }}/health
             port: {{ .Values.config.http.port }}
           initialDelaySeconds: 5
           periodSeconds: 5
