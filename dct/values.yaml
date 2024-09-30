@@ -116,6 +116,11 @@ nats:
 
 config:
   environment: development
+  apiEndPoint: /
+
+  delUrl: "https://del-dev3.gxfs.dev/inbox"
+  delIdUrl: "https://dcs.gaia-x.com/contracts/1001"
+  delInboxUrl: "https://del-dev3.gxfs.dev/inbox"
 
   trustServiceUrl: "https://trust-service.com"
   federatedCatalogUrl: "https://federated-catalog.com"
@@ -141,7 +146,7 @@ config:
 redis:
   enabled: true
   auth:
-    password: "test"
+    password: "xfsc4Ntt!"
   master:
     persistence:
       size: 5Gi
@@ -149,11 +154,6 @@ redis:
     replicaCount: 1
     persistence:
       size: 5Gi
-  addr: "redis-master:6379"
-  user: "" 
-  pass: ""
-  db: 0
-  expiration: 1h
 
 ingress:
   enabled: true
@@ -162,9 +162,6 @@ ingress:
       - path: /dct
         port: 8080
         pathType: Prefix
-  rewriteTarget:
-    regex: /dct(/|$)(.*)
-    replacement: /$2
   tls:
     - secretName: dataspace4health.local
       hosts:

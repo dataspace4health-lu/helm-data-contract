@@ -66,7 +66,11 @@ spec:
 
           # server
           - name: NX_API_ENDPOINT
-            value: "http://localhost:{{ .Values.config.http.port }}"
+            {{- if .Values.config.apiEndPoint }}
+            value: {{ .Values.config.apiEndPoint | quote }}
+            {{- else }}
+            value: '/api'
+            {{- end }}
           - name: SERVER_THROTLLER_TTL
             value: "60"
           - name: SERVER_THROTLLER_LIMIT
@@ -112,7 +116,7 @@ spec:
             value: "node"
           {{- if .Values.redis.enabled }}
           - name: REDIS_HOST
-            value: "{{ include "app.chartname" . }}-redis-master.default.svc.cluster.local"
+            value: "{{ include "app.chartname" . }}-redis-master.{{ .Release.Namespace }}.svc.cluster.local"
           - name: REDIS_PORT
             value: "6379"
           {{- else }}
@@ -131,16 +135,16 @@ spec:
 
           # Data Exchange Logging
           - name: DELS_LINK
-            value: "https://del-dev3.gxfs.dev/inbox"
+            value: {{ .Values.config.delUrl | quote }}
           - name: DELS_REL
             value: "http://www.w3.org/ns/ldp#inbox"
           - name: DELS_CONTEXT
             value: "https://www.w3.org/ns/ldp"
           - name: DELS_ID
-            value: "https://dcs.gaia-x.com/contracts/1001"
+            value: {{ .Values.config.delIdUrl | quote }}
           - name: DELS_INBOX
-            value: "https://del-dev3.gxfs.dev/inbox"
-
+            value: {{ .Values.config.delInboxUrl | quote }} #
+          
           #gateway
           - name: TRUST_SERVICE_URL
             value: {{ .Values.config.trustServiceUrl | quote }}
@@ -162,10 +166,6 @@ spec:
             value: {{ .Values.config.logTokenJwtSecretKey | quote }}
           - name: LOG_TOKEN_EXPIRES_IN_MINUTES
             value: "120"
-
-          #health-check
-          - name: API_DOCUMENTATION_URL
-            value: "http://localhost:8000/"
 
         {{- if .Values.secretEnv }}
         {{- range $key, $value := .Values.secretEnv }}
@@ -189,7 +189,7 @@ spec:
           containerPort: {{ .Values.config.http.port }}
         readinessProbe:
           httpGet:
-            path: /health
+            path: {{ default "/api" .Values.config.apiEndPoint | trimSuffix "/" }}/health
             port: {{ .Values.config.http.port }}
           initialDelaySeconds: 5
           periodSeconds: 5
