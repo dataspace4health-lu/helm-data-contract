@@ -69,7 +69,7 @@ spec:
             {{- if .Values.config.apiEndPoint }}
             value: {{ .Values.config.apiEndPoint | quote }}
             {{- else }}
-            value: '/api'
+            value: '/dct/api'
             {{- end }}
           - name: SERVER_THROTLLER_TTL
             value: "60"
@@ -189,7 +189,7 @@ spec:
           containerPort: {{ .Values.config.http.port }}
         readinessProbe:
           httpGet:
-            path: {{ default "/api" .Values.config.apiEndPoint | trimSuffix "/" }}/health
+            path: {{ default "/dct/api" .Values.config.apiEndPoint | trimSuffix "/" }}/health
             port: {{ .Values.config.http.port }}
           initialDelaySeconds: 5
           periodSeconds: 5
