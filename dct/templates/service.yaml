@@ -9,7 +9,7 @@ spec:
   clusterIP: None
   ports:
   - name: http
-    targetPort: {{ .Values.service.port }}
-    port: {{ .Values.config.http.port }}
+    targetPort: {{ .Values.config.http.port }}
+    port: {{ .Values.service.port }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}

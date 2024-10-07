@@ -19,24 +19,37 @@ image:
   pullPolicy: IfNotPresent
   # -- Image pull secret when internal image is used
   pullSecrets:
-  # command: 
-  #   - "/bin/sh"
-  # args: 
-  #   - "-c"
-  #   - |
-  #     set -x
+  command: 
+    - "/bin/sh"
+  args: 
+    - "-c"
+    - |
+      set -x
 
-  #     rm -rf node_modules dist
-  #     mkdir repo && cd repo && apk add git
-  #     git clone https://gitlab.eclipse.org/eclipse/xfsc/dct/dct.git && cd dct
-  #     npm config set @gaia-x:registry https://gitlab.com/api/v4/projects/38989724/packages/npm/
-  #     npm i -g @nrwl/cli
-  #     npm ci --legacy-peer-deps
-  #     npm run build
-  #     npm ci --only=production --legacy-peer-deps && npm cache clean --force
+      rm -rf node_modules dist
 
-  #     mv dist / && mv node_modules / && cd / && rm -rf repo
-  #     node dist/apps/api/main.js
+      mkdir repo && cd repo && apk add git
+      git clone https://gitlab.eclipse.org/eclipse/xfsc/dct/dct.git && cd dct
+      git checkout 34a967038aa5632ea6a763f4ddf639ab0fb8a238
+
+      sed -i 's|"baseHref": "/ui/",|"baseHref": "/dct/",|' apps/ui/project.json
+      sed -i 's|"outputPath": "dist/apps/ui",|"outputPath": "dist/apps/ui/dct",|' apps/ui/project.json
+      sed -i 's|href="/ui/assets|href="assets|' apps/ui/src/index.html
+      sed -i "s|<BrowserRouter basename='/ui'>|<BrowserRouter basename='/dct'>|" apps/ui/src/main.tsx
+      
+      sed -i "s|SwaggerModule.setup('swagger', app, document);|SwaggerModule.setup('dct/swagger', app, document);|" apps/api/src/main.ts
+      sed -i "/initSwagger(app);/i\ \ app.setGlobalPrefix('dct/api');" apps/api/src/main.ts
+      sed -i "s|/ui|/dct|" apps/api/src/app.module.ts
+      sed -i "s|ui|ui/dct|" apps/api/src/app.module.ts
+
+      npm config set @gaia-x:registry https://gitlab.com/api/v4/projects/38989724/packages/npm/
+      npm i -g @nrwl/cli
+      npm ci --legacy-peer-deps
+      npm run build
+      npm ci --only=production --legacy-peer-deps && npm cache clean --force
+
+      mv dist / && mv node_modules / && cd / && rm -rf repo
+      node dist/apps/api/main.js
 
 ## Use configMap or secretRef for environment variables
 # useConfigMap: false
@@ -115,9 +128,26 @@ nats:
     enabled: false
 
 config:
+  environment: development
+  apiEndPoint: /dct/api
+
+  delUrl: "https://del-dev3.gxfs.dev/inbox"
+  delIdUrl: "https://dcs.gaia-x.com/contracts/1001"
+  delInboxUrl: "https://del-dev3.gxfs.dev/inbox"
+
+  trustServiceUrl: "https://trust-service.com"
+  federatedCatalogUrl: "https://federated-catalog.com"
+  signatureId: "did:dcs:key:123"
+  signatureType: "Ed25519VerificationKey2018"
+  signatureController: "did:dcs:controller"
+  signaturePublicKeyBase58: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+  signaturePrivateKeyBase58: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+
+  logTokenJwtSecretKey: "somesecretkey"
+
   http:
     host: ""
-    port: 8080
+    port: 3000
     timeout:
       idle: 120s
       read: 10s
@@ -129,7 +159,7 @@ config:
 redis:
   enabled: true
   auth:
-    password: ""
+    password: "xfsc4Ntt!"
   master:
     persistence:
       size: 5Gi
@@ -137,11 +167,6 @@ redis:
     replicaCount: 1
     persistence:
       size: 5Gi
-  addr: "redis-master:6379"
-  user: "" 
-  pass: ""
-  db: 0
-  expiration: 1h
 
 ingress:
   enabled: true
@@ -150,9 +175,6 @@ ingress:
       - path: /dct
         port: 8080
         pathType: Prefix
-  rewriteTarget:
-    regex: /dct(/|$)(.*)
-    replacement: /$2
   tls:
     - secretName: dataspace4health.local
       hosts:
