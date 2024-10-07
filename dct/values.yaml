@@ -48,7 +48,7 @@ image:
       npm run build
       npm ci --only=production --legacy-peer-deps && npm cache clean --force
 
-      mv dist / && mv node_modules / && cd / 
+      mv dist / && mv node_modules / && cd / && rm -rf repo
       node dist/apps/api/main.js
 
 ## Use configMap or secretRef for environment variables
