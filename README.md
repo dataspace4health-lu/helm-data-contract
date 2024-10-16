@@ -190,6 +190,24 @@ Validate Contract: The diagram outlines a contract validation process with four 
 ![Validate Final Contract](docs/Validate%20Contract.png)
 
 ### Register Data Asset Contract
+
+### Process Overview
+
+1. **Verify Provider's GX Participation:**
+   - Send a GET request to check if the provider is a GX Participant (using mock data for now).
+   - If the provider is not a GX Participant, terminate the process and return an "unauthorized" exception.
+
+2. **Validate Provider's Signature:**
+   - If the provider is a GX Participant, validate their signature.
+   - If the signature is invalid, terminate the process and return an "unauthorized" exception.
+
+3. **Check Self-Description with GX-FC:**
+   - If the signature is valid, verify with GX-FC that the provider’s Self-Description is formally correct.
+
+4. **Add GX-DCS Signature to Self-Description:**
+   - If the Self-Description is correct, the GX-DCS must add its signature to the Data Asset Self-Description.
+
+---
 ![Register Overview](docs/register.png)
 
 
@@ -211,3 +229,25 @@ In this scenario, the Data Provider invites Data Consumers to make contract offe
 - If the Data Provider accepts the offer, they sign the contract using the /finalize endpoint, including their signature over all relevant details. 
 - The GX-DCS then validates the entire contract, ensuring both parties have confirmed and signed it. Once validated, the GX-DCS adds its signature, finalizing the contract and distributing the fully executed agreement to all parties involved.
 ![Make Negitiate Contract Overview](docs/Negotiate.png)
+
+### Token Generation Process
+
+1. **Validate Provider's Signature:**
+   - If the provider is a GX Participant, validate their signature.
+   - If the signature is invalid, terminate the process and return an "unauthorized" exception.
+
+2. **Validate Consumer's Signature:**
+   - Validate the consumer's signature.
+   - If the signature is invalid, terminate the process and return an "unauthorized" exception.
+
+3. **Validate Data Contract Service Signature:**
+   - Validate the Data Contract Service (DCS) signature.
+   - If the signature is invalid, terminate the process and return an "unauthorized" exception.
+
+4. **Check if Logging is Enabled:**
+   - Determine if the logging attribute is enabled.
+
+5. **Generate Token:**
+   - Generate a token for the validated data asset.
+
+![Token Generation Process](docs/log-token.png)
