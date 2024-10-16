@@ -160,3 +160,54 @@ The Data Provider invites Data Consumers to make contract offers by sharing the 
 | **Input** |**Ouptut**                                                                                                                                                                          |
 |--------------------|-------------------------------------|
 |Finalized Agreement | Validity of the finalized Agreement |
+
+## Acitvity diagram 
+
+### Useful Diagram
+#### Validate Participant
+Validate Participant: This diagram illustrates the steps for validating a participant:
+
+- The participant information is retrieved from the Trust Service.
+- It then checks if the participant exists. If not, the process ends.
+- If the participant exists, it checks whether the participant's status has been revoked. If revoked, the process stops. If not, the validation continues.
+![Validate Participant Overview](docs/Validate%20Participant.png)
+
+#### Validate Data Asset
+Validate Data Asset: This diagram describes the process of validating a data asset:
+
+- The process begins by retrieving the original data asset from the Federated Catalog.
+- It then checks if the data asset is valid. If the asset is invalid, the process terminates.
+- If valid, it verifies whether the data asset is supported. If the asset is unsupported, the process stops. Otherwise, the process continues.
+![Validate Contract Data Format](docs/Validate%20Data%20Asset.png)
+
+#### Validate Final Contract 
+Validate Contract: The diagram outlines a contract validation process with four key validation steps:
+
+- First, it checks if the contract structure is valid. If not, the process stops.
+- Second, it validates the consumer's signature. If the signature is invalid, the process stops.
+- Third, it validates the provider's signature, with a similar exit condition for failure.
+- Finally, it checks the validity of the Data Contract Service (DCS) signature. If all signatures and structure are valid, the process continues; otherwise, it terminates.
+![Validate Final Contract](docs/Validate%20Contract.png)
+
+### Register Data Asset Contract
+![Register Overview](docs/register.png)
+
+
+
+Afterwards, a contract can be established in two different ways: 
+### Make Non Negociable Contract
+The Data Providers offer a Data Asset “as is” only based on the DASD and allow each valid GX-DCS to finalize the Data Contract on their behalf:
+
+- Data Consumers can either access GX-FC’s API directly to search, filter available Data Asset SDs, or they can make use of the Gaia-X Portal, which accesses GX-FC behind the scenes and provides a neat GUI for browsing Data Asset SDs
+- The Data Consumer begins by adding their Consumer Details to the Data Asset Self-Description (DASD) and signs the contract with a Consumer Signature. (The contract already contains the Provider Details and Contract Details, which were signed earlier by the Data Provider and verified by the GX-DCS with a DCS Signature)
+- Once the Consumer adds their signature, the GX-DCS validates both the Provider and Consumer signatures, along with all other contract details. If everything is correct, the GX-DCS finalizes the agreement by updating its DCS Signature, confirming the contract’s validity. This final step completes the contract, ensuring that all involved parties and details are properly validated.
+- The entire process is conducted via the /make/contract endpoint.
+![Make Contract Overview](docs/make%20contract.png)
+
+### Make Negociable Contract
+In this scenario, the Data Provider invites Data Consumers to make contract offers by sharing the Data Asset Self-Description (DASD). However, the contract cannot be finalized until the Data Provider actively confirms the offer. The Data Provider sets the gax property in the DASD to ensure they have the final say in accepting or rejecting any offer.  
+- Consumers, in this case, may submit offers by adding their Consumer Details and signing the DASD. They can also propose modifications to negotiable parts of the contract, if allowed. 
+- The signed offer is then submitted via the /negotiate endpoint to the GX-DCS, which verifies the changes against the original DASD, ensuring only negotiable properties were modified.
+- If the Data Provider accepts the offer, they sign the contract using the /finalize endpoint, including their signature over all relevant details. 
+- The GX-DCS then validates the entire contract, ensuring both parties have confirmed and signed it. Once validated, the GX-DCS adds its signature, finalizing the contract and distributing the fully executed agreement to all parties involved.
+![Make Negitiate Contract Overview](docs/Negotiate.png)
