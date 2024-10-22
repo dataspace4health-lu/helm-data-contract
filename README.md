@@ -25,17 +25,17 @@ GX-DCS is a stateless microservice providing backend logic with a few interfaces
 
 ## Data Contract Transaction Overview
 The data contract transaction process involves several key stakeholders—Data Consumer, Data Provider, and the Data Contract Service. Each party plays a specific role in the lifecycle of a contract, from the registration of a service offering to the validation and signing of the final agreement. Below, we illustrate two distinct contract transaction types: a negotiable contract and a non-negotiable contract.
-## Making Non negotiable Contract
+### Making Non negotiable Contract
 For non-negotiable contracts, the process is simplified. The Data Consumer directly chooses and signs the service offering without the possibility of modifications. The Data Contract Service then validates the final contract and signs it.
 
 ![Product Overview](docs/make%20non%20negotaible%20contract%20overview.png)
-## Making negotiable Contract
+### Making negotiable Contract
 In this case, the Data Consumer can choose a service offering and propose modifications. Once the Data Contract Service receives the modified offer, they forward the final agreement to the Data Provider. After the Data Provider accepts the offer, they send the argument with their signature. The Data Contract Service then validates and signs the arguments.
 
 ![Product Overview](docs/make%20negotaible%20contract%20overview.png)
 
 
-## Missing Implementation 
+### Missing Implementation 
 Currently, the Data Contract Transaction (DCT) relies on two key external services: the **Trusted Service** and **the Federated Catalogue**. These components play a critical role in ensuring secure and valid interactions:
 
 - Trusted Service: The DCT uses the Trusted Service to validate that the requester is a Gaia-X Participant, ensuring that only authorized entities are involved in the transaction.
@@ -43,3 +43,11 @@ Currently, the Data Contract Transaction (DCT) relies on two key external servic
 - Federated Catalogue: The DCT interacts with the Federated Catalogue to validate the Data Asset by comparing it with the original Data Asset registered in the FC. This ensures the integrity and authenticity of the Data Asset throughout the transaction.
 
 At present, both the Trusted Service and Federated Catalogue interactions are mocked, meaning the DCT makes mock calls to simulate the behavior of these services during development. Full integration with these services will be implemented in future updates.
+
+
+## Data Exchange Logging Overview
+After a contract has been agreed upon and has been signed by both parties, data transmission from the Data Provider to the Data Consumer can commence. 
+
+The contract negotiation can lead to both sides agreeing on a logging service which is then used by both sides to log data transactions. 
+
+![Product Overview](docs/Gaia-X%20Data%20Exchange%20Logging%20Overviewpng.png)
