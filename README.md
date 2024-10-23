@@ -46,8 +46,21 @@ At present, both the Trusted Service and Federated Catalogue interactions are mo
 
 
 ## Data Exchange Logging Overview
-After a contract has been agreed upon and has been signed by both parties, data transmission from the Data Provider to the Data Consumer can commence. 
+- After a contract has been agreed upon and has been signed by both parties, data transmission from the Data Provider to the Data Consumer can commence. 
 
-The contract negotiation can lead to both sides agreeing on a logging service which is then used by both sides to log data transactions. 
+- The contract negotiation can lead to both sides agreeing on a logging service which is then used by both sides to log data transactions. 
 
+- GX-DCS issues and renews log authorization tokens needed for logging 
+
+- Only Data Providers and Data Consumers with a valid Gaia-X Identity possessing a valid Log Token from the Contract Service may write and read Log Entries
 ![Product Overview](docs/Gaia-X%20Data%20Exchange%20Logging%20Overviewpng.png)
+
+### Missing Implementation 
+1. Token Validation Endpoint (/log/token/validate)
+- Purpose: This endpoint is supposed to validate a token by returning detailed information about the token, such as the log ID, transaction ID, contract ID, and expiration time.
+- Current Mocked Response: A hardcoded response with static token validation data is used.
+- Where Used: Inside the dct gateway file, the function getLogToken calls this endpoint to validate tokens.
+
+2. Key Retrieval (Provider/Consumer) (/get-key?did=did:provider:key:123/consumer:key:123)
+- Purpose: This endpoint is supposed to retrieve the public key associated with a specific provider.
+- Current Mocked Response: A static response returning the provider's public key details, such as the key ID and controller.
