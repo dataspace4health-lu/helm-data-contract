@@ -46,13 +46,13 @@ At present, both the Trusted Service and Federated Catalogue interactions are mo
 
 
 ## Data Exchange Logging Overview
-- After a contract has been agreed upon and has been signed by both parties, data transmission from the Data Provider to the Data Consumer can commence. 
+- After a contract has been agreed upon and has been signed by both parties, data transmission from the Data Provider to the Data Consumer can start. 
 
 - The contract negotiation can lead to both sides agreeing on a logging service which is then used by both sides to log data transactions. 
 
 - GX-DCS issues and renews log authorization tokens needed for logging 
 
-- Only Data Providers and Data Consumers with a valid Gaia-X Identity possessing a valid Log Token from the Contract Service may write and read Log Entries
+- Only Data Providers and Data Consumers with a valid Gaia-X Identity owning a valid Log Token from the Contract Service may write and read Log Entries
 ![Product Overview](docs/Gaia-X%20Data%20Exchange%20Logging%20Overviewpng.png)
 
 ### Missing Implementation 
