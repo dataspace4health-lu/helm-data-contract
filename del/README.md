@@ -22,9 +22,9 @@ Before sending the actual data, the Data Provider first sends a notification to 
 The notification includes the contract identifier, which links the data transaction to a specific contract or agreement. </br>
 This notification is logged and assigned a unique contract identifier to link it to the specific transaction.
 
-2. Data Provider Sends the Data (GET Contract Target) </br>
+2. Data Provider Sends the Data (GET Contract DCT) </br>
 Following the notification, the Data Provider sends the actual data to the Data Consumer. </br>
-The Contract (Target) in the diagram is referenced during this exchange to ensure that the data transfer complies with the agreed terms. </br>
+The Contract (DCT) in the diagram is referenced during this exchange to ensure that the data transfer complies with the agreed terms. </br>
 The Data Consumer checks the contract details using GET/HEAD requests.
 
 3. Data Consumer Receives the Data (Post to Inbox) </br>
@@ -38,9 +38,38 @@ The GET/HEAD requests allow the involved parties to track the notifications and 
 Key Components:
 
 - Inbox: This is where all notifications related to the data transaction are logged by GX-DELS.
-- Contract (Target): The contract or agreement tied to the data transfer. Both the Data Provider and Data Consumer can reference this contract using GET/HEAD requests to ensure the transaction is compliant with the terms.
-
+- DCT: The contract or agreement tied to the data transfer. Both the Data Provider and Data Consumer can reference this contract using GET/HEAD requests to ensure the transaction is compliant with the terms.</br>
 ![Product Overview](docs/Sequence%20Diagram%20Detailed%20Interaction.png)
+
+
+### How Data Sending Works:
+1. **Does the Provider Push the Data?**
+    - One possibility is that the provider actively sends (or "pushes") the data to the consumer.
+2. **Does the Consumer Pull the Data?** (Most likely correct)
+    - A more likely scenario is that the consumer pulls the data from the provider when it is ready.
+3. **Could Both Methods Be Possible?**
+    - It's also possible that both pushing and pulling methods are used, depending on the use case.
+
+#### **If the Consumer Pulls the Data (Most Likely Scenario):**
+The main question here is: **How does the consumer know when the data is ready to pull?**
+The answer lies in a notification system.
+- Notification System:
+    - The provider sends a notification when the data is ready.
+    - The consumer listens for this notification, and as soon as it receives the notification, it pulls the data from the provider.
+
+Example Workflow (Pull with Notification):
+1. Consumer Pulls Data:
+    - The consumer periodically checks or waits for a notification from the provider.
+2. Provider Sends Notification:
+    - When the provider is ready with the data, it sends a notification to the consumer.
+3. Consumer Receives Notification:
+    - Once the notification is received, the consumer pulls the data from the provider. In this case, there's no need for the provider to receive further notifications once the data is pulled.
+
+
+
+
+
+
 
 
 The two main functions of the Gaia-X Service Instance (GX-SI) GX-DELS are:
