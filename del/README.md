@@ -66,12 +66,6 @@ Example Workflow (Pull with Notification):
     - Once the notification is received, the consumer pulls the data from the provider. In this case, there's no need for the provider to receive further notifications once the data is pulled.
 
 
-
-
-
-
-
-
 The two main functions of the Gaia-X Service Instance (GX-SI) GX-DELS are:
 
 - Log Notifications into the GX-DELS Inbox: Data Provider and Data Consumer can send notifications on events to the GX-DELS Inbox including a logging token to verify the existence of a contract.
@@ -85,3 +79,42 @@ The following figure provides an overview of the main functionality of GX-DELS:
 | **/inbox/{notification_id}**       | GET | Get the details of a specific notification. |
 | **/inbox**      | POST | Sends a notification to the GX-DELS Inbox. |
 
+
+### Simplified version of the workflow for the GET /inbox API:
+
+1. **Token Validation:** The request must include an Authorization header with a valid token. The system checks this to make sure the request is from a trusted user.
+
+2. **Validate Query Parameters:** The system checks if the query parameters (like page number, limit, or filters) are correct and within allowed ranges.
+
+3. **Retrieve Messages:** Based on the query parameters, the system fetches the inbox messages from the database.
+
+4. **Format Messages:** The system organizes the retrieved messages into a proper format, possibly adding extra info like metadata or cleaning up unnecessary details.
+
+5. **Send Response:** Finally, the system sends the formatted messages back to the client, along with any other useful information, such as pagination details.
+
+This process ensures that the request is authenticated, the parameters are correct, the messages are fetched and prepared properly, and the client gets a well-structured response. </br>
+![Get Notifications](docs/get%20inbox.png)
+
+ ### Simplified version of your workflow for the /post inbox API:
+
+1. **Message Validation:** The system first checks if the incoming message is correctly formatted using a validator in the processNotification method.
+
+2. **Token Validation:** The request must include an Authorization header with a valid token. The system checks this to ensure the request is from a legitimate source.
+
+3. **Signature Validation:** The system further verifies the token to make sure it’s properly signed and contains the necessary information.
+
+4. **Add to Queue:** Once the notification passes validation, it gets added to a queue for processing.
+
+5. **Processing from Queue:** The system retrieves the notification from the queue and starts processing it.
+
+6. **Save to Database:** After processing, the system verifies the notification and stores it in the database.
+
+7. **Add to Callback Queue:** If there are more notifications to process, the system adds the next task to a callback queue.
+
+8. **Process Callback Queue:** The next notification is picked from the callback queue and processed.
+
+9. **Notify Participant:** Finally, the system sends a notification to the participant about the status of their request.
+
+
+This process ensures that the notifications are correctly validated, processed, and the user is informed about the outcome.</br>
+![Post Notifications](docs/POST%20inbox.png)
