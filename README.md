@@ -63,6 +63,6 @@ At present, both the Trusted Service and Federated Catalogue interactions are mo
 - **Part of**: Data Contract Transaction
 
 2. **Key Retrieval (Provider/Consumer) (/get-key?did=did:provider:key:123/consumer:key:123)**
-- **Purpose**: This endpoint is supposed to retrieve the public key associated with a specific provider.
+- **Purpose**: This endpoint is supposed to be provided by the TSA in order to allow the DEL to retrieve the public key associated with a specific provider or consumer.
 - **Current Mocked Response**: A static response returning the provider's public key details, such as the key ID and controller.
 - **Part of**: Trusted Service
