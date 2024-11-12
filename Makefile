@@ -5,16 +5,16 @@ helm package . -d helm
 endef
 
 define test =
-kubectl run playwright --image mcr.microsoft.com/playwright:v1.46.1 --command -- bash -c "mkdir -p app/tests && sleep infinity"
-kubectl wait --for=condition=ready pod playwright
-kubectl cp tests playwright:/app
--kubectl exec playwright -- bash -c "cd /app/tests && export CI=1 && npm i --silent && npx -y playwright test --output ./results"
+mkdir -p tests/results/${timestamp}
+docker run -d -t --name playwright --ipc=host mcr.microsoft.com/playwright:v1.46.1
+docker exec playwright bash -c "mkdir -p app/tests"
+docker cp tests playwright:/app
+-docker exec playwright bash -c "cd /app/tests && export CI=1 && npm i --silent && npx -y playwright test --output ./results"
 if [ $$? -eq 0 ]; then \
-	kubectl cp playwright:/app/tests/results/ tests/results/${timestamp}/traces; \
-	kubectl cp playwright:/app/tests/playwright-report/ tests/results/${timestamp}/report; \
+	docker cp playwright:/app/tests/results/ tests/results/${timestamp}/traces; \
+	docker cp playwright:/app/tests/playwright-report/ tests/results/${timestamp}/report; \
 fi
-
-kubectl delete pod playwright
+docker rm -f playwright
 endef
 
 SUBDIRS := $(wildcard src/*/.)
@@ -41,11 +41,11 @@ uninstall:
 	docker delete pod playwright 2> /dev/null || true
 
 	helm uninstall $(CURRENT_DIR) 2> /dev/null || true
-	kubectl delete pvc redis-data-dct-redis-master-0 2> /dev/null || true
-	kubectl delete pvc redis-data-dct-redis-replicas-0 2> /dev/null || true
-	kubectl delete pvc redis-data-del-redis-master-0 2> /dev/null || true
-	kubectl delete pvc redis-data-del-redis-replicas-0 2> /dev/null || true
-	kubectl delete pvc data-del-postgresql-0 2> /dev/null || true
+	kubectl delete pvc redis-data-$(CURRENT_DIR)-dct-redis-master-0 2> /dev/null || true
+	kubectl delete pvc redis-data-$(CURRENT_DIR)-dct-redis-replicas-0 2> /dev/null || true
+	kubectl delete pvc redis-data-$(CURRENT_DIR)-del-redis-master-0 2> /dev/null || true
+	kubectl delete pvc redis-data-$(CURRENT_DIR)-del-redis-replicas-0 2> /dev/null || true
+	kubectl delete pvc data-$(CURRENT_DIR)-del-postgresql-0 2> /dev/null || true
 
 clean: $(SUBDIRS)
 	rm -rf charts helm

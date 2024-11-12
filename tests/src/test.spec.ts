@@ -3,11 +3,9 @@ import registerDataAsset from "./register.json";
 import providerNotification from "./provider-post-notification.json";
 import consumerNotification from "./consumer-post-notification.json";
 
-const dctBaseUrl = "http://dataspace4health.local/dct/api";
-
 test.describe("Data Contract Non Negotiable Flow", () => {
-  test("Service Health", async ({ request }) => {
-    const response = await request.get(`${dctBaseUrl}/health`);
+  test("Service Health", async ({ request, baseURL }) => {
+    const response = await request.get(`${baseURL}/dct/api/health`);
 
     // Validate status code
     expect(response.status()).toBe(200);
@@ -19,8 +17,8 @@ test.describe("Data Contract Non Negotiable Flow", () => {
     expect(healthResponse).toHaveProperty("status", "ok");
   });
   let registerAssetResponse;
-  test("Register a data asset", async ({ request }) => {
-    const response = await request.post(`${dctBaseUrl}/register`, {
+  test("Register a data asset", async ({ request, baseURL }) => {
+    const response = await request.post(`${baseURL}/dct/api/register`, {
       headers: {
         "Content-Type": " application/ld+json",
       },
@@ -38,7 +36,7 @@ test.describe("Data Contract Non Negotiable Flow", () => {
   });
 
   let finalContract;
-  test("Make contract", async ({ request }) => {
+  test("Make contract", async ({ request, baseURL }) => {
     const consumerSignature = {
       created: "2022-08-18T10:41:35Z",
       jws: "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Z3TevpLn-1MEc4hIdvmocc4uSWL-Y0xNoXuc8Pqp2H3u2N8SRC1QDr7oKE1lCiILf5B_npG61H4zWmuVcX0GBw",
@@ -62,7 +60,7 @@ test.describe("Data Contract Non Negotiable Flow", () => {
       consumerDid;
     makeContractBody.verifiableCredential[0].issuer = consumerIssuer;
 
-    const response = await request.post(`${dctBaseUrl}/make/contract`, {
+    const response = await request.post(`${baseURL}/dct/api/make/contract`, {
       headers: {
         "Content-Type": " application/ld+json",
       },
@@ -79,8 +77,8 @@ test.describe("Data Contract Non Negotiable Flow", () => {
     expect(finalContract).toHaveProperty("proof");
   });
 
-  test("log contract token", async ({ request }) => {
-    const response = await request.post(`${dctBaseUrl}/log/token`, {
+  test("log contract token", async ({ request, baseURL }) => {
+    const response = await request.post(`${baseURL}/dct/api/log/token`, {
       headers: {
         "Content-Type": " application/ld+json",
       },
@@ -92,16 +90,17 @@ test.describe("Data Contract Non Negotiable Flow", () => {
   });
 });
 
-const delBaseUrl = "http://dataspace4health.local/del/api";
-const providerAuthToken = process.env.PROVIDER_AUTH_TOKEN ||
+const providerAuthToken =
+  process.env.PROVIDER_AUTH_TOKEN ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYXgtZGNzOmxvZ0lEIjoiMjExNjUzNDktZTBiNy00NjYxLWFmYWYtNGE5ZWJmZGMwZGViIiwiZ2F4LWRjczpkYXRhVHJhbnNhY3Rpb25JRCI6IjEyMyIsImdheC1kY3M6Y29udHJhY3RJRCI6Imh0dHA6Ly9leGFtcGxlLm9yZy9kYXRhLWFzc2V0LTEiLCJpc3MiOiIoTG9nZ2luZyBzZXJ2aWNlIElEKSIsInN1YiI6ImRpZDpwcm92aWRlcjoxMjMiLCJhdWQiOiIoR1gtREVMUyBpZGVudGlmaWVyKSIsImV4cCI6MTY2MTI1NjQxMiwiaWF0IjoxNjYwODI0NDEyfQ.tWFCqb4daL7CQ7FC-c-dbIs5YDjRqzID-vMdkvuOP4E";
-  const consumerAuthToken = process.env.CONSUMER_AUTH_TOKEN ||
+const consumerAuthToken =
+  process.env.CONSUMER_AUTH_TOKEN ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYXgtZGNzOmxvZ0lEIjoiMjExNjUzNDktZTBiNy00NjYxLWFmYWYtNGE5ZWJmZGMwZGViIiwiZ2F4LWRjczpkYXRhVHJhbnNhY3Rpb25JRCI6IjEyMyIsImdheC1kY3M6Y29udHJhY3RJRCI6Imh0dHA6Ly9leGFtcGxlLm9yZy9kYXRhLWFzc2V0LTEiLCJpc3MiOiIoTG9nZ2luZyBzZXJ2aWNlIElEKSIsInN1YiI6ImRpZDpjb25zdW1lcjoxMjMiLCJhdWQiOiIoR1gtREVMUyBpZGVudGlmaWVyKSIsImV4cCI6MTY2MTI1NjQxMiwiaWF0IjoxNjYwODI0NDEyfQ.rUQtzr06Jd07qYzI-yTVn-YyG35_vMRu9spXtvljxEA";
 let adminToken;
 
 test.describe("Data Exchange Logging", () => {
-  test("Provider: Send notification", async ({ request }) => {
-    const response = await request.post(`${delBaseUrl}/inbox`, {
+  test("Provider: Send notification", async ({ request, baseURL }) => {
+    const response = await request.post(`${baseURL}/del/api/inbox`, {
       headers: {
         "Content-Type": "application/ld+json",
         Authorization: `Bearer ${providerAuthToken}`,
@@ -113,8 +112,8 @@ test.describe("Data Exchange Logging", () => {
     expect(response.status()).toBe(202);
   });
 
-  test("Consumer: Send notification", async ({ request }) => {
-    const response = await request.post(`${delBaseUrl}/inbox`, {
+  test("Consumer: Send notification", async ({ request, baseURL }) => {
+    const response = await request.post(`${baseURL}/del/api/inbox`, {
       headers: {
         "Content-Type": "application/ld+json",
         Authorization: `Bearer ${consumerAuthToken}`,
@@ -126,8 +125,8 @@ test.describe("Data Exchange Logging", () => {
     expect(response.status()).toBe(202);
   });
 
-  test("Get Notifications", async ({ request }) => {
-    const response = await request.get(`${delBaseUrl}/inbox`, {
+  test("Get Notifications", async ({ request, baseURL }) => {
+    const response = await request.get(`${baseURL}/del/api/inbox`, {
       headers: {
         "Content-Type": "application/ld+json",
         Authorization: `Bearer ${providerAuthToken}`,
@@ -142,12 +141,12 @@ test.describe("Data Exchange Logging", () => {
     expect(Array.isArray(responseBody)).toBe(true);
   });
 
-  test("Login to the admin portal", async ({ request }) => {
+  test("Login to the admin portal", async ({ request, baseURL }) => {
     const loginBody = {
       username: "admin",
       password: "xfsc4Ntt!",
     };
-    const response = await request.post(`${delBaseUrl}/auth/login`, {
+    const response = await request.post(`${baseURL}/del/api/auth/login`, {
       data: loginBody,
     });
 
@@ -158,8 +157,22 @@ test.describe("Data Exchange Logging", () => {
     adminToken = (await response.json()).accessToken;
   });
 
-  test("Get list of logs", async ({ request }) => {
-    const response = await request.get(`${delBaseUrl}/logs?page=1&pageSize=5`, {
+  test("Get list of logs", async ({ request, baseURL }) => {
+    const response = await request.get(
+      `${baseURL}/del/api/logs?page=1&pageSize=5`,
+      {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    // Validate status code
+    expect(response.status()).toBe(200);
+  });
+
+  test("Get list of settings", async ({ request, baseURL }) => {
+    const response = await request.get(`${baseURL}/del/api/settings`, {
       headers: {
         Authorization: `Bearer ${adminToken}`,
       },
@@ -169,22 +182,11 @@ test.describe("Data Exchange Logging", () => {
     expect(response.status()).toBe(200);
   });
 
-  test("Get list of settings", async ({ request }) => {
-    const response = await request.get(`${delBaseUrl}/settings`, {
-      headers: {
-        Authorization: `Bearer ${adminToken}`,
-      },
-    });
-
-    // Validate status code
-    expect(response.status()).toBe(200);
-  });
-
-  test("update settings", async ({ request }) => {
+  test("update settings", async ({ request, baseURL }) => {
     const updatedSettings = {
       SETTING_LOG_PRUNING_CRON: "*/4 * * * *",
     };
-    const response = await request.put(`${delBaseUrl}/settings`, {
+    const response = await request.put(`${baseURL}/del/api/settings`, {
       headers: {
         Authorization: `Bearer ${adminToken}`,
       },
