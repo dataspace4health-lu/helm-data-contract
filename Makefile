@@ -18,7 +18,7 @@ docker rm -f playwright
 endef
 
 SUBDIRS := $(wildcard src/*/.)
-CURRENT_DIR := $(shell echo $(notdir $(shell pwd)) | tr '[:upper:]' '[:lower:]')
+CURRENT_DIR := dex# $(shell echo $(notdir $(shell pwd)) | tr '[:upper:]' '[:lower:]')
 
 .PHONY: all build $(SUBDIRS) install test uninstall clean
 
@@ -46,6 +46,7 @@ uninstall:
 	kubectl delete pvc redis-data-$(CURRENT_DIR)-del-redis-master-0 2> /dev/null || true
 	kubectl delete pvc redis-data-$(CURRENT_DIR)-del-redis-replicas-0 2> /dev/null || true
 	kubectl delete pvc data-$(CURRENT_DIR)-del-postgresql-0 2> /dev/null || true
+	kubectl delete pvc data-$(CURRENT_DIR)-del-db-backup 2> /dev/null || true
 
 clean: $(SUBDIRS)
 	rm -rf charts helm
