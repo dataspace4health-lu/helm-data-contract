@@ -167,6 +167,9 @@ postgresql:
     username: "postgres"
     password: "xfsc4Ntt!"
     database: postgres
+  primary:
+    persistence:
+      size: 5Gi
 
 ingress:
   enabled: true

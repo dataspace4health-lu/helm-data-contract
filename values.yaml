@@ -1,0 +1,14 @@
+dct:
+  nameOverride: dct
+  redis:
+    enabled: true
+    nameOverride: dct-redis
+
+del:
+  nameOverride: del
+  postgresql:
+    enabled: true
+    nameOverride: del-postgresql
+  redis:
+    enabled: true
+    nameOverride: del-redis

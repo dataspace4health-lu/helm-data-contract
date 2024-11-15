@@ -1,0 +1,44 @@
+{
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        {
+            "@id": "https://gaia-dataexchange-notification.com/",
+            "@context": {
+                "@version": 1.1,
+                "id": "@id",
+                "type": "@type",
+                "sender": {
+                    "@id": "https://gaia-dataexchange-notification.com/vc#sender"
+                },
+                "receiver": {
+                    "@id": "https://gaia-dataexchange-notification.com/vc#receiver"
+                },
+                "description": {
+                    "@id": "https://gaia-dataexchange-notification.com/vc#description"
+                },
+                "contract": {
+                    "@id": "https://gaia-dataexchange-notification.com/vc#contract"
+                }
+            }
+        }
+    ],
+    "type": [
+        "VerifiableCredential"
+    ],
+    "credentialSubject": {
+        "receiver": "did:provider:123",
+        "sender": "did:consumer:123",
+        "description": "i received data",
+        "contract": "http://example.org/data-asset-1",
+        "type": "ReceivedDataNotification"
+    },
+    "issuanceDate": "2021-01-23T12:21:23.876Z",
+    "issuer": "did:consumer:controller",
+    "proof": {
+        "type": "Ed25519Signature2018",
+        "created": "2022-09-08T09:36:12Z",
+        "verificationMethod": "did:consumer:key:123",
+        "proofPurpose": "assertionMethod",
+        "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Q7tKfQI6Vd7in0fCql21ujY9h-gF3yB4x4XONkhr4TdUGWlIAwp3epKQYyzFhmWJ5vpIw6qSiZHmghLXV05TCQ"
+    }
+}
