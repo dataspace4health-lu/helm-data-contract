@@ -1,6 +1,6 @@
 apiVersion: v2
-name: data-exchange
-description: A Helm chart for deploying the Data Exchange service.
+name: data-contract
+description: A Helm chart for deploying the Data Contract services.
 type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
@@ -17,7 +17,7 @@ appVersion: "1.0.0"
 dependencies:
   - name: dct
     version: 1.0.0
-    repository: "file://src/dct"
-  - name: del
-    version: 1.0.0
-    repository: "file://src/del"
+    repository: "file://components/dct"
+  # - name: del
+  #   version: 1.0.0
+  #   repository: "file://components/del"
