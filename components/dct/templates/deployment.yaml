@@ -60,17 +60,20 @@ spec:
           # general
           - name: NODE_ENV
             value: {{ .Values.config.environment | quote }}
+          - name: NX_API_PORT
+            value: {{ .Values.config.http.port | quote }}
+          - name: NX_API_BASEPATH
+            {{- if .Values.config.api.basePath }}
+            value: {{ .Values.config.api.basePath | quote }}
+            {{- else }}
+            value: '/dct/api'
+            {{- end }}
+
           # size in bytes
           - name: REQUEST_SIZE
             value: "1000000"
 
           # server
-          - name: NX_API_ENDPOINT
-            {{- if .Values.config.apiEndPoint }}
-            value: {{ .Values.config.apiEndPoint | quote }}
-            {{- else }}
-            value: '/dct/api'
-            {{- end }}
           - name: SERVER_THROTLLER_TTL
             value: "60"
           - name: SERVER_THROTLLER_LIMIT
@@ -189,7 +192,7 @@ spec:
           containerPort: {{ .Values.config.http.port }}
         readinessProbe:
           httpGet:
-            path: {{ default "/dct/api" .Values.config.apiEndPoint | trimSuffix "/" }}/health
+            path: {{ default "/dct/api" .Values.config.api.basePath | trimSuffix "/" }}/health
             port: {{ .Values.config.http.port }}
           initialDelaySeconds: 5
           periodSeconds: 5

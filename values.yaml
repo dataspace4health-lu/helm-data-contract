@@ -3,12 +3,109 @@ dct:
   redis:
     enabled: true
     nameOverride: dct-redis
+    auth:
+      password: "xfsc4Ntt!"
+    master:
+      persistence:
+        size: 5Gi
+    replica:
+      replicaCount: 1
+      persistence:
+        size: 5Gi
+  config:
+    environment: development
+    api:
+      basePath: /dct/api
+    delUrl: "https://del-dev3.gxfs.dev/inbox"
+    delIdUrl: "https://dcs.gaia-x.com/contracts/1001"
+    delInboxUrl: "https://del-dev3.gxfs.dev/inbox"
+    trustServiceUrl: "https://trust-service.com"
+    federatedCatalogUrl: "https://federated-catalog.com"
+    signatureId: "did:dcs:key:123"
+    signatureType: "Ed25519VerificationKey2018"
+    signatureController: "did:dcs:controller"
+    signaturePublicKeyBase58: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
+    signaturePrivateKeyBase58: "3hJ4PNJm6pzUwRLDpummeZCZGeqE7c9DMdD6qSNB4qBfxrnkAUmZ1CQMpifvihdiSv8pepijdCzR5C2eAHC4Vqf9"
+    logTokenJwtSecretKey: "somesecretkey"
+    http:
+      host: ""
+      port: 3000
+      timeout:
+        idle: 120s
+        read: 10s
+        write: 10s
+    redis:
+      host:
+      port:
+  ingress:
+    enabled: true
+    hosts:
+      - paths:
+        - path: /dct
+          port: 8080
+          pathType: Prefix
+    tls:
+      - secretName: dataspace4health.local
+        hosts:
+          - dataspace4health.local
 
 del:
   nameOverride: del
-  postgresql:
-    enabled: true
-    nameOverride: del-postgresql
   redis:
     enabled: true
     nameOverride: del-redis
+    auth:
+      password: "xfsc4Ntt!"
+    master:
+      persistence:
+        size: 5Gi
+    replica:
+      replicaCount: 1
+      persistence:
+        size: 5Gi
+  postgresql:
+    enabled: true
+    nameOverride: del-postgresql
+    auth:
+      postgresPassword: "xfsc4Ntt!"
+      username: "postgres"
+      password: "xfsc4Ntt!"
+      database: postgres
+    primary:
+      persistence:
+        size: 5Gi
+  config:
+    environment: development # development or production
+    apiEndPoint: /del/api
+    admin:
+      username: admin
+      password: xfsc4Ntt!
+      jwtSecretKey: dafgsdfgsdfgasdfasdf
+    backup:
+      location: /backups
+      cron: "*/5 * * * *"
+    trustServiceUrl: https://trust-service.com
+    dctServiceUrl: http://dct-service.com
+    camServiceUrl: http://example.com
+    documentationUrl: http://api-docs.com
+    http:
+      host: ""
+      port: 3000
+      timeout:
+        idle: 120s
+        read: 10s
+        write: 10s
+    redis:
+      host:
+      port:
+  ingress:
+    enabled: true
+    hosts:
+      - paths:
+        - path: /del
+          port: 8080
+          pathType: Prefix
+    tls:
+      - secretName: dataspace4health.local
+        hosts:
+          - dataspace4health.local
