@@ -68,7 +68,22 @@ spec:
             {{- else }}
             value: '/dct/api'
             {{- end }}
-
+          - name: NX_OIDC_ISSUER
+            value: {{ .Values.config.oidcIssuer | quote }}
+          - name: NX_OIDC_CLIENT_ID
+            value: {{ .Values.config.oidcClientId | quote }}
+          - name: NX_OIDC_CLIENT_SECRET
+            value: {{ .Values.config.oidcClientSecret | quote }}
+          - name: NX_OIDC_SCOPE
+            value: {{ .Values.config.oidcScope | quote }}
+          - name: NX_OIDC_REDIRECT_URI
+            value: {{ .Values.config.oidcRedirectUri | quote }}
+          - name: NX_OIDC_RESPONSE_TYPE
+            value: {{ .Values.config.oidcResponseType | quote }}
+          - name: NX_OIDC_POST_LOGOUT_REDIRECT_URI
+            value: {{ .Values.config.oidcPostLogoutRedirectUri | quote }}      
+          - name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: {{ .Values.config.nodeTlsRejectUnauthorized | quote }}
           # size in bytes
           - name: REQUEST_SIZE
             value: "1000000"
