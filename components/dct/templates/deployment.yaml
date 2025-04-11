@@ -164,8 +164,8 @@ spec:
             value: {{ .Values.config.delInboxUrl | quote }} #
           
           #gateway
-          - name: TRUST_SERVICE_URL
-            value: {{ .Values.config.trustServiceUrl | quote }}
+          - name: DID_RESOLVER_SERVICE_URL
+            value: {{ .Values.config.didResolverServiceUrl | quote }}
           - name: FEDERATED_CATALOG_URL
             value: {{ .Values.config.federatedCatalogUrl | quote }}
 

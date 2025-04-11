@@ -134,7 +134,7 @@ config:
   delIdUrl: "https://dcs.gaia-x.com/contracts/1001"
   delInboxUrl: "https://del-dev3.gxfs.dev/inbox"
 
-  trustServiceUrl: "https://trust-service.com"
+  didResolverServiceUrl: "https://trust-service.com"
   federatedCatalogUrl: "http://dataspace4health.local/catalogue"
   signatureId: "did:dcs:key:123"
   signatureType: "Ed25519VerificationKey2018"
