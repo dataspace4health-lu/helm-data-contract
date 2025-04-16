@@ -1,6 +1,7 @@
-fcat-portal:
+dct: 
   image:
-    repository: dh4sdev.azurecr.io/fc-protal
+    repository: dh4sdev.azurecr.io
+    name: xfsc-dct
     tag: "0.0.1"
-  imagePullSecrets:
-    - name: acr-creds
+    imagePullSecrets:
+      - name: acr-creds
