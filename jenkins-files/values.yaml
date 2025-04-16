@@ -3,5 +3,4 @@ dct:
     repository: dh4sdev.azurecr.io
     name: xfsc-dct
     tag: "0.0.1"
-    imagePullSecrets:
-      - name: acr-creds
+    pullSecrets: acr-creds
