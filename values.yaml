@@ -2,7 +2,7 @@ dct:
   nameOverride: dct
   redis:
     enabled: true
-    nameOverride: dct-redis
+    nameOverride: redis
     auth:
       password: "xfsc4Ntt!"
     master:
