@@ -35,6 +35,7 @@ dct:
     oidcPostLogoutRedirectUri: "https://dataspace4health.local/dct/ui"
     nodeTlsRejectUnauthorized: 0
     logTokenJwtSecretKey: "somesecretkey"
+    waltSsiKitUrl: "http://iat-issuer-api:7000"
     http:
       host: ""
       port: 3000
