@@ -136,8 +136,10 @@ config:
 
   didResolverServiceUrl: "https://trust-service.com"
   federatedCatalogUrl: "http://dataspace4health.local/catalogue"
-  signatureId: "did:dcs:key:123"
-  signatureType: "Ed25519VerificationKey2018"
+  signatureId: "did:web:dataspace4health.local:wallet:api:wallet-api:registry:0"
+  proofType: "LD_PROOF"
+  proofPurpose: "assertionMethod"
+  signatureType: "JsonWebSignature2020"
   signatureController: "did:dcs:controller"
   signaturePublicKeyBase58: "45dxsXGjMixWNfmXBtWwPnCfGgV1THf6qhdLixUmgrVZ"
   signaturePrivateKeyBase58: "3hJ4PNJm6pzUwRLDpummeZCZGeqE7c9DMdD6qSNB4qBfxrnkAUmZ1CQMpifvihdiSv8pepijdCzR5C2eAHC4Vqf9"

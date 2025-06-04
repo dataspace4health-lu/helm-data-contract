@@ -175,6 +175,10 @@ spec:
             value:  {{ .Values.config.signatureId | quote }}
           - name: SIGNATURE_TYPE
             value: {{ .Values.config.signatureType | quote }}
+          - name: PROOF_TYPE
+            value: {{ .Values.config.proofType | quote }}
+          - name: PROOF_PURPOSE
+            value: {{ .Values.config.proofPurpose | quote }}
           - name: SIGNATURE_CONTROLLER
             value: {{ .Values.config.signatureController | quote }}
           - name: SIGNATURE_PUBLIC_KEY_BASE58
