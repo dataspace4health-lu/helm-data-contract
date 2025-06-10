@@ -84,8 +84,8 @@ spec:
             value: {{ .Values.config.oidcPostLogoutRedirectUri | quote }}      
           - name: NODE_TLS_REJECT_UNAUTHORIZED
             value: {{ .Values.config.nodeTlsRejectUnauthorized | quote }}
-          - name: WALT_SSKIT_URL
-            value: {{ .Values.config.waltSsiKitUrl | quote }}
+          - name: WALTID_SSKIT_URL
+            value: {{ .Values.config.waltidSsiKitUrl | quote }}
           # size in bytes
           - name: REQUEST_SIZE
             value: "1000000"
