@@ -17,7 +17,7 @@ fi
 docker rm -f playwright
 endef
 
-SUBDIRS := $(wildcard src/*/.)
+SUBDIRS := $(wildcard components/*/.)
 CURRENT_DIR := dex# $(shell echo $(notdir $(shell pwd)) | tr '[:upper:]' '[:lower:]')
 
 .PHONY: all build $(SUBDIRS) install test uninstall clean
