@@ -1,12 +1,18 @@
-timestamp = $(shell date "+%Y.%m.%d-%H.%M.%S")
+timestamp ?= $(shell date "+%Y.%m.%d-%H.%M.%S")
+# playwright contianer name
+name ?= "playwright"
+# playwright docker network
+network ?= bridge
+# configure core dns
+dns_cmd ?=
+# -f filename
+override_values ?= 
+
 define build =
 helm dependency update
 helm package . -d helm
 endef
 
-name ?= "playwright"
-network ?= bridge
-dns_cmd ?=
 define test =
 mkdir -p tests/results/${timestamp}
 docker run -d -t --name $(name) --network $(network) --ipc=host mcr.microsoft.com/playwright:v1.46.1
