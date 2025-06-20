@@ -30,7 +30,7 @@ pipeline {
                 stage("Clone Helm DCT Repo") {
                     steps {
                         script {
-                            utils.cloneRepo(env.FC_HELM_REPO, env.HELM_FC_DIR)
+                            utils.cloneRepo(env.DCT_HELM_REPO, env.HELM_DCT_DIR)
                         }
                     }
                 }
@@ -64,7 +64,7 @@ pipeline {
                 stage("Helm Chart Security Check") {
                     steps {
                         script {
-                            dir(env.HELM_FC_DIR) {
+                            dir(env.HELM_DCT_DIR) {
                                 tests.trivyHelmChartCheck("./", "DCT")
                             }
                         }
@@ -77,7 +77,7 @@ pipeline {
     post {
         always {
             script {
-                ms.deleteImage(env.FC_PORTAL_IMG_FILE)
+                ms.deleteImage(env.XFSC_DCT_IMG_FILE)
                 ms.postCleanup()
             }
         }
