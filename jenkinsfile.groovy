@@ -27,23 +27,21 @@ pipeline {
 
         stage("Setup Repos") {
             parallel {
-                stages {
-                    stage("Clone Helm DCT Repo") {
-                        steps {
-                            script {
-                                utils.cloneRepo(env.FC_HELM_REPO, env.HELM_FC_DIR)
-                            }
-                        }
-                    }
-                    stage("Setup XFSC DCT Repo") {
-                        steps {
-                            script {
-                                ms.setupXFSCRepo(false)
-                            }
+                stage("Clone Helm DCT Repo") {
+                    steps {
+                        script {
+                            utils.cloneRepo(env.FC_HELM_REPO, env.HELM_FC_DIR)
                         }
                     }
                 }
-            }
+                stage("Setup XFSC DCT Repo") {
+                    steps {
+                        script {
+                            ms.setupXFSCRepo(false)
+                        }
+                    }
+                }
+            } 
         }
 
         stage("Build XFSC DCT Image") {
