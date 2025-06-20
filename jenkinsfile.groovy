@@ -31,6 +31,9 @@ pipeline {
                     steps {
                         script {
                             utils.cloneRepo(env.DCT_HELM_REPO, env.HELM_DCT_DIR)
+                            dir(env.HELM_DCT_DIR) {
+                                sh 'make build'
+                            }
                         }
                     }
                 }
@@ -52,22 +55,20 @@ pipeline {
             }
         }
 
-        stage("Deploy And Test") {
-            parallel {
-                stage("Create K3d Cluster and Test") {
-                    steps {
-                        script {
-                            ms.deployDCT()
-                        }
-                    }
+
+        stage("Create K3d Cluster and Test") {
+            steps {
+                script {
+                    ms.deployDCT()
                 }
-                stage("Helm Chart Security Check") {
-                    steps {
-                        script {
-                            dir(env.HELM_DCT_DIR) {
-                                tests.trivyHelmChartCheck("./", "DCT")
-                            }
-                        }
+            }
+        }
+
+        stage("Helm Chart Security Check") {
+            steps {
+                script {
+                    dir(env.HELM_DCT_DIR) {
+                        tests.trivyHelmChartCheck("./", "DCT")
                     }
                 }
             }
