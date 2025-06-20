@@ -55,20 +55,23 @@ pipeline {
             }
         }
 
-
-        stage("Create K3d Cluster and Test") {
-            steps {
-                script {
-                    ms.deployDCT()
+        stage("Deploy Adn Test") {
+            parallel {
+                stage("Create K3d Cluster and Test") {
+                    steps {
+                        script {
+                            ms.deployDCT()
+                        }
+                    }
                 }
-            }
-        }
 
-        stage("Helm Chart Security Check") {
-            steps {
-                script {
-                    dir(env.HELM_DCT_DIR) {
-                        tests.trivyHelmChartCheck("./", "DCT")
+                stage("Helm Chart Security Check") {
+                    steps {
+                        script {
+                            dir(env.HELM_DCT_DIR) {
+                                tests.trivyHelmChartCheck("./", "DCT")
+                            }
+                        }
                     }
                 }
             }
