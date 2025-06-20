@@ -42,7 +42,7 @@ $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 install:
-	helm install $(CURRENT_DIR) helm/*.tgz
+	helm install $(CURRENT_DIR) helm/*.tgz $(override_values)
 
 test:
 	$(test)
