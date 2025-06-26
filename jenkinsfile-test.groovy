@@ -10,6 +10,6 @@ properties([
 helmPipeline(
     NODE_NAME: params.NODE_NAME,
     IMG_PAHTS: 'select(.kind == "Deployment" and .metadata.labels."app.kubernetes.io/name" == "dct") | .spec.template.spec.containers[0].image',
-    IMG_JOBS: 'Data Space for Health/test-antonio-docker/xfsc-dct',
+    IMG_JOBS: 'DS4H/test-antonio-docker/xfsc-dct',
     PUBLISH_HELM: params.PUBLISH_HELM
 )
