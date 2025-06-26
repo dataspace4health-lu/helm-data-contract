@@ -2,7 +2,7 @@
 
 properties([
     parameters([
-        string(name: 'NODE_NAME', description: 'Agent to run on', defaultValue: 'any')
+        string(name: 'NODE_NAME', description: 'Agent to run on', defaultValue: 'any'),
         string(name: "PUBLISH_HELM", description: "Registry to use for publishing", defaultValue: '')
     ])
 ])
