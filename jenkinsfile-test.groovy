@@ -1,10 +1,15 @@
 @Library(value="ds4h", changelog=false) _
 
+properties([
+    parameters([
+        string(name: 'NODE_NAME', description: 'Agent to run on', defaultValue: 'any')
+        string(name: "PUBLISH_HELM", description: "Registry to use for publishing", defaultValue: '')
+    ])
+])
+
 helmPipeline(
-    REPOS: [
-        HELM_PATH:'',
-        IMAGE_NAME:'xfsc-dct',
-        REPO_URL:'git@ssh.dev.azure.com:v3/Dataspace4Health/DS4H/xfsc-dct',
-        BRANCH:'main'
-    ]
+    NODE_NAME: params.NODE_NAME,
+    IMG_PAHTS: 'select(.kind == "Deployment" and .metadata.labels."app.kubernetes.io/name" == "dct") | .spec.template.spec.containers[0].image',
+    IMG_JOBS: 'Data Space for Health/test-antonio-docker/xfsc-dct',
+    PUBLISH_HELM: params.PUBLISH_HELM
 )
