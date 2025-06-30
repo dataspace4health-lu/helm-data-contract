@@ -1,0 +1,6 @@
+dct: 
+  image:
+    repository: repository_domain
+    name: image_name
+    tag: "0.0.1"
+    pullSecrets: acr-creds
